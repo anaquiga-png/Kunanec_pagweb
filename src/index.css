@@ -1,0 +1,23 @@
+@import 'tailwindcss';
+
+@theme {
+  --font-sans: 'Inter', ui-sans-serif, system-ui, sans-serif;
+  --color-kunan-950: #070b14;
+  --color-kunan-900: #0c1428;
+  --color-kunan-800: #132447;
+  --color-kunan-700: #1a3566;
+  --color-kunan-primary: #0b5ed7;
+  --color-kunan-primary-dark: #084298;
+  --color-kunan-accent: #14b8a6;
+  --color-kunan-accent-soft: #5eead4;
+  --radius-card: 1.25rem;
+}
+
+@layer base {
+  html {
+    scroll-behavior: smooth;
+  }
+  body {
+    @apply bg-slate-50 text-slate-800 antialiased font-sans;
+  }
+}
