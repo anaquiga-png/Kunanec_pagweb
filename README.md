@@ -12,23 +12,64 @@ npm install
 cp .env.example .env.local
 ```
 
-### Subir el proyecto a GitHub (primera vez)
+### Subir el proyecto a GitHub con SSH (recomendado)
 
-En la carpeta del proyecto **ya está inicializado Git** y hay un commit inicial. Solo falta crear el repositorio remoto y empujar.
+En la carpeta del proyecto **ya está inicializado Git** y hay commits listos. Autenticación por **SSH** (sin contraseña de GitHub en cada `push`).
 
-1. Entra en [github.com/new](https://github.com/new) e inicia sesión.
-2. **Repository name:** por ejemplo `pagweb-kunan` o `kunan-salud-ecuador-landing`.
-3. Elige **Private** si no quieres que el código sea público.
-4. **No** marques “Add a README”, “Add .gitignore” ni licencia (deja el repo vacío para evitar conflictos).
-5. Crea el repositorio. GitHub mostrará comandos; en la terminal, dentro de esta carpeta, ejecuta (cambia `TU-USUARIO` y `TU-REPO`):
+#### 1) Clave SSH en tu Mac
+
+Si **no** existe `~/.ssh/id_ed25519` todavía, créala:
+
+```bash
+mkdir -p ~/.ssh && chmod 700 ~/.ssh
+ssh-keygen -t ed25519 -C "tu-email@ejemplo.com" -f ~/.ssh/id_ed25519
+```
+
+(Pulsa Enter para la frase opcional, o elige una para más seguridad.) Si ese archivo **ya existe**, no vuelvas a generar con el mismo `-f` o la sobrescribirías; pasa directo al paso 2.
+
+Muestra la clave **pública** (toda una sola línea que empieza por `ssh-ed25519`):
+
+```bash
+cat ~/.ssh/id_ed25519.pub
+```
+
+#### 2) Registrar la clave en GitHub
+
+1. Copia el contenido de `id_ed25519.pub`.  
+2. GitHub → tu avatar → **Settings** → **SSH and GPG keys** → **New SSH key**.  
+3. Título: por ejemplo `Mac personal`. Pega la clave → **Add SSH key**.
+
+#### 3) Probar conexión
+
+```bash
+ssh -T git@github.com
+```
+
+Debería salir algo como: `Hi TU-USUARIO! You've successfully authenticated...`
+
+#### 4) Crear el repo vacío y hacer push
+
+1. [github.com/new](https://github.com/new) → nombre (ej. `pagweb-kunan`) → **Private** si quieres → **sin** README / .gitignore / licencia → **Create repository**.  
+2. En la carpeta del proyecto (sustituye `TU-USUARIO` y `TU-REPO`):
 
 ```bash
 cd "/Users/anaquirola/pagweb kunan"
-git remote add origin https://github.com/TU-USUARIO/TU-REPO.git
+git remote remove origin 2>/dev/null || true
+git remote add origin git@github.com:TU-USUARIO/TU-REPO.git
 git push -u origin main
 ```
 
-Si GitHub pide autenticación: usa un **Personal Access Token** (Settings → Developer settings → Personal access tokens) como contraseña, o configura [SSH](https://docs.github.com/en/authentication/connecting-to-github-with-ssh).
+Si ya habías añadido `origin` con HTTPS: `git remote set-url origin git@github.com:TU-USUARIO/TU-REPO.git`
+
+**Opcional:** en `~/.ssh/config` puedes fijar la clave para GitHub:
+
+```
+Host github.com
+  HostName github.com
+  User git
+  IdentityFile ~/.ssh/id_ed25519
+  IdentitiesOnly yes
+```
 
 Para que tus commits muestren tu nombre y correo: `git config --global user.name "Tu Nombre"` y `git config --global user.email "tu@email.com"`.
 
