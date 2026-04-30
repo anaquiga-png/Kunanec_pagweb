@@ -12,6 +12,26 @@ npm install
 cp .env.example .env.local
 ```
 
+### Subir el proyecto a GitHub (primera vez)
+
+En la carpeta del proyecto **ya está inicializado Git** y hay un commit inicial. Solo falta crear el repositorio remoto y empujar.
+
+1. Entra en [github.com/new](https://github.com/new) e inicia sesión.
+2. **Repository name:** por ejemplo `pagweb-kunan` o `kunan-salud-ecuador-landing`.
+3. Elige **Private** si no quieres que el código sea público.
+4. **No** marques “Add a README”, “Add .gitignore” ni licencia (deja el repo vacío para evitar conflictos).
+5. Crea el repositorio. GitHub mostrará comandos; en la terminal, dentro de esta carpeta, ejecuta (cambia `TU-USUARIO` y `TU-REPO`):
+
+```bash
+cd "/Users/anaquirola/pagweb kunan"
+git remote add origin https://github.com/TU-USUARIO/TU-REPO.git
+git push -u origin main
+```
+
+Si GitHub pide autenticación: usa un **Personal Access Token** (Settings → Developer settings → Personal access tokens) como contraseña, o configura [SSH](https://docs.github.com/en/authentication/connecting-to-github-with-ssh).
+
+Para que tus commits muestren tu nombre y correo: `git config --global user.name "Tu Nombre"` y `git config --global user.email "tu@email.com"`.
+
 ### Conectar Supabase
 
 1. En [Supabase Dashboard](https://supabase.com/dashboard) → tu proyecto → **Settings → API**.
