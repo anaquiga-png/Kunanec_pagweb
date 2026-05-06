@@ -32,8 +32,8 @@ const pains = [
 
 export function Problem() {
   return (
-    <Section id="problema" title="Hoy competir no es suficiente" className="bg-slate-50">
-      <p className="mb-10 max-w-3xl text-lg text-slate-600">
+    <Section id="problema" title="Hoy competir no es suficiente" className="bg-kunan-surface">
+      <p className="mb-10 max-w-3xl text-lg text-kunan-muted">
         Las empresas ya no compiten solo por precio o producto. Compiten por experiencia, conexión y valor percibido.
         En Ecuador, la confianza y el acompañamiento marcan la diferencia.
       </p>
@@ -45,11 +45,11 @@ export function Problem() {
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true, margin: '-40px' }}
             transition={{ delay: i * 0.05, duration: 0.4 }}
-            className="flex flex-col gap-3 rounded-2xl border border-slate-200/80 bg-white p-5 shadow-sm shadow-slate-200/50"
+            className="flex flex-col gap-3 rounded-2xl border border-slate-200/80 bg-white p-5 shadow-sm shadow-slate-300/55"
           >
             <item.icon className="h-8 w-8 text-kunan-primary" aria-hidden />
             <h3 className="text-base font-semibold text-kunan-900">{item.title}</h3>
-            <p className="text-sm text-slate-600">{item.desc}</p>
+            <p className="text-sm text-kunan-muted">{item.desc}</p>
           </motion.li>
         ))}
       </ul>

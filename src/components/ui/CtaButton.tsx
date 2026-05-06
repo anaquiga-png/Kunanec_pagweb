@@ -26,8 +26,8 @@ export function CtaButton({
     'inline-flex items-center justify-center gap-2 rounded-full px-6 py-3 text-sm font-semibold transition focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 disabled:pointer-events-none disabled:opacity-60'
   const styles =
     variant === 'primary'
-      ? 'bg-kunan-primary text-white shadow-lg shadow-blue-900/20 hover:bg-kunan-primary-dark focus-visible:outline-kunan-primary'
-      : 'border border-slate-200 bg-white/80 text-slate-800 backdrop-blur hover:border-kunan-accent/50 hover:text-kunan-800 focus-visible:outline-kunan-accent'
+      ? 'bg-kunan-primary text-white shadow-lg shadow-kunan-primary/35 hover:bg-kunan-primary-dark focus-visible:outline-kunan-primary'
+      : 'border border-slate-200 bg-white/90 text-kunan-900 backdrop-blur hover:border-kunan-primary/40 hover:text-kunan-primary focus-visible:outline-kunan-accent'
 
   return (
     <button

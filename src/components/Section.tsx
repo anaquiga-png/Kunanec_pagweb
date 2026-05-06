@@ -41,7 +41,7 @@ export function Section({
                 {title}
               </h2>
             )}
-            {description && <p className="text-lg text-slate-600">{description}</p>}
+            {description && <p className="text-lg text-kunan-muted">{description}</p>}
           </header>
         )}
         {children}

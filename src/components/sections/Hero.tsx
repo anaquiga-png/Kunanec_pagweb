@@ -5,11 +5,11 @@ import { CtaButton } from '@/components/ui/CtaButton'
 export function Hero() {
   return (
     <section
-      className="relative overflow-hidden bg-gradient-to-br from-kunan-900 via-kunan-800 to-kunan-700 px-4 pb-20 pt-16 text-white sm:px-6 sm:pb-24 sm:pt-20 lg:px-8 lg:pb-28 lg:pt-24"
+      className="relative overflow-hidden bg-gradient-to-br from-kunan-primary via-kunan-primary-dark to-kunan-900 px-4 pb-20 pt-16 text-white sm:px-6 sm:pb-24 sm:pt-20 lg:px-8 lg:pb-28 lg:pt-24"
       aria-labelledby="hero-title"
     >
-      <div className="pointer-events-none absolute -left-32 top-0 h-96 w-96 rounded-full bg-kunan-primary/30 blur-3xl" />
-      <div className="pointer-events-none absolute -right-24 bottom-0 h-80 w-80 rounded-full bg-kunan-accent/25 blur-3xl" />
+      <div className="pointer-events-none absolute -left-32 top-0 h-96 w-96 rounded-full bg-kunan-sky/35 blur-3xl" />
+      <div className="pointer-events-none absolute -right-24 bottom-0 h-80 w-80 rounded-full bg-kunan-accent/30 blur-3xl" />
       <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(ellipse_at_top,rgba(255,255,255,0.12),transparent_55%)]" />
 
       <div className="relative mx-auto grid max-w-6xl gap-12 lg:grid-cols-[1.1fr_0.9fr] lg:items-center">
@@ -43,7 +43,7 @@ export function Hero() {
             transition={{ delay: 0.12, duration: 0.5 }}
             className="flex flex-col gap-3 sm:flex-row sm:flex-wrap"
           >
-            <CtaButton trackingLabel="Solicitar demo" trackingSection="hero_primary" className="shadow-xl shadow-black/30">
+            <CtaButton trackingLabel="Solicitar demo" trackingSection="hero_primary" className="shadow-xl shadow-kunan-primary-dark/45">
               Solicitar demo
             </CtaButton>
             <CtaButton

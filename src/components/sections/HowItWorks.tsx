@@ -22,7 +22,7 @@ const steps = [
 
 export function HowItWorks() {
   return (
-    <Section id="como-funciona" title="Simple. Inmediato. Escalable." className="bg-slate-50">
+    <Section id="como-funciona" title="Simple. Inmediato. Escalable." className="bg-kunan-surface">
       <ol className="grid gap-6 lg:grid-cols-3">
         {steps.map((s, i) => (
           <motion.li
@@ -34,7 +34,7 @@ export function HowItWorks() {
             className="relative flex flex-col gap-4 rounded-3xl border border-slate-200 bg-white p-6 shadow-sm"
           >
             <div className="flex items-center gap-3">
-              <span className="flex h-10 w-10 items-center justify-center rounded-2xl bg-gradient-to-br from-kunan-primary to-kunan-accent text-sm font-bold text-white">
+              <span className="flex h-10 w-10 items-center justify-center rounded-2xl bg-gradient-to-br from-kunan-primary to-kunan-primary-dark text-sm font-bold text-white">
                 {s.n}
               </span>
               <s.icon className="h-7 w-7 text-kunan-primary" aria-hidden />
