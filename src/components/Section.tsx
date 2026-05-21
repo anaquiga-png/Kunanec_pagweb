@@ -25,7 +25,7 @@ export function Section({
   return (
     <Tag
       id={id}
-      className={`px-4 py-16 sm:px-6 lg:px-8 lg:py-20 ${className}`}
+      className={`scroll-mt-24 px-4 py-16 sm:px-6 lg:px-8 lg:py-20 ${className}`}
       aria-labelledby={title ? titleId : undefined}
     >
       <div className={`mx-auto max-w-6xl ${innerClassName}`}>

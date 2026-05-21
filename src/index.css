@@ -26,3 +26,19 @@
     @apply bg-white text-kunan-muted antialiased font-sans;
   }
 }
+
+@layer utilities {
+  .benefits-dot-pattern {
+    background-color: #f6f4fb;
+    background-image: radial-gradient(circle, rgba(111, 45, 226, 0.12) 1px, transparent 1px);
+    background-size: 22px 22px;
+  }
+
+  .allies-section-pattern {
+    background-color: #eef5e7;
+    background-image:
+      linear-gradient(rgba(131, 222, 85, 0.04) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(131, 222, 85, 0.04) 1px, transparent 1px);
+    background-size: 48px 48px;
+  }
+}

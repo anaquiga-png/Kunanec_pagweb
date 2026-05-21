@@ -14,15 +14,16 @@ export function Hero() {
 
       <div className="relative mx-auto grid max-w-6xl gap-12 lg:grid-cols-[1.1fr_0.9fr] lg:items-center">
         <div className="space-y-8">
-          <motion.div
+          <motion.a
+            href="#demo"
             initial={{ opacity: 0, y: 16 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.5 }}
-            className="inline-flex items-center gap-2 rounded-full border border-white/15 bg-white/10 px-4 py-1.5 text-xs font-medium text-white/90 backdrop-blur"
+            className="inline-flex cursor-pointer items-center gap-2 rounded-full bg-[#F3E8FF] px-6 py-2 text-xs font-semibold text-[#6F2DE2] shadow-md shadow-black/10 transition-colors hover:bg-[#EBD5FF] sm:px-7 sm:text-sm"
           >
-            <Sparkles className="h-4 w-4 text-kunan-accent-soft" aria-hidden />
-            Kunan Salud Ecuador · B2B &amp; aliados estratégicos
-          </motion.div>
+            <Sparkles className="h-4 w-4 shrink-0 text-[#6F2DE2]" aria-hidden />
+            Quiero Kunan para mi empresa
+          </motion.a>
           <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.05, duration: 0.55 }}>
             <h1 id="hero-title" className="text-4xl font-semibold leading-tight tracking-tight sm:text-5xl lg:text-6xl">
               Convierte el bienestar en una ventaja competitiva
@@ -51,7 +52,7 @@ export function Hero() {
               trackingLabel="Hablar con un asesor"
               trackingSection="hero_secondary"
               metaContact
-              className="border-white/30 bg-white/10 text-white hover:bg-white/15"
+              className="border-0 bg-white text-[#6F2DE2] font-semibold hover:bg-[#F4F1FF] hover:text-[#5820B8] transition-all duration-300"
             >
               Hablar con un asesor
             </CtaButton>

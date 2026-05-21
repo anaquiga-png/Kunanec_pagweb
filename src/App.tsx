@@ -3,10 +3,11 @@ import { Footer } from '@/components/layout/Footer'
 import { Header } from '@/components/layout/Header'
 import { EmotionalStatement } from '@/components/sections/EmotionalStatement'
 import { FinalCta } from '@/components/sections/FinalCta'
+import { StrategicPartners } from '@/components/sections/StrategicPartners'
 import { Hero } from '@/components/sections/Hero'
 import { HowItWorks } from '@/components/sections/HowItWorks'
+import { OurBenefits } from '@/components/sections/OurBenefits'
 import { Problem } from '@/components/sections/Problem'
-import { Solution } from '@/components/sections/Solution'
 import { UseCases } from '@/components/sections/UseCases'
 import { ValueCards } from '@/components/sections/ValueCards'
 
@@ -18,11 +19,12 @@ function App() {
       <main>
         <Hero />
         <Problem />
-        <Solution />
+        <OurBenefits />
         <ValueCards />
         <HowItWorks />
         <UseCases />
         <EmotionalStatement />
+        <StrategicPartners />
         <FinalCta />
       </main>
       <Footer />

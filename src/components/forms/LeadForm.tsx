@@ -104,6 +104,12 @@ export function LeadForm() {
     })
     metaTrackLead()
     void forwardLeadToCrm(row)
+
+    void fetch('https://anaquiga.app.n8n.cloud/webhook/registro-landing', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(row),
+    }).catch(() => {})
     setSuccess(true)
     reset()
   }
@@ -213,7 +219,7 @@ export function LeadForm() {
           <label className={labelClass} htmlFor="user_volume">
             Número aproximado de usuarios / colaboradores
           </label>
-          <input id="user_volume" className={fieldClass} placeholder="Ej. 500 – 2.000" {...register('user_volume')} />
+          <input id="user_volume" className={fieldClass} placeholder="50 – 2.000" {...register('user_volume')} />
           {errors.user_volume && <p className="mt-1 text-sm text-red-600">{errors.user_volume.message}</p>}
         </div>
 

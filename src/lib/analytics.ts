@@ -15,18 +15,23 @@ export function initAnalytics() {
   if (w.__kunanAnalyticsInit) return
   w.__kunanAnalyticsInit = true
 
-  const gaId = import.meta.env.VITE_GA4_MEASUREMENT_ID
+  const gaId = import.meta.env.VITE_GA4_MEASUREMENT_ID?.trim()
   if (gaId) {
     initDataLayer()
-    window.gtag = function gtag(...args: unknown[]) {
-      window.dataLayer!.push(args)
+    if (typeof window.gtag !== 'function') {
+      window.gtag = function gtag(...args: unknown[]) {
+        window.dataLayer!.push(args)
+      }
     }
-    const s = document.createElement('script')
-    s.async = true
-    s.src = `https://www.googletagmanager.com/gtag/js?id=${encodeURIComponent(gaId)}`
-    document.head.appendChild(s)
+    const gtagSrc = `https://www.googletagmanager.com/gtag/js?id=${encodeURIComponent(gaId)}`
+    if (!document.querySelector(`script[src="${gtagSrc}"]`)) {
+      const s = document.createElement('script')
+      s.async = true
+      s.src = gtagSrc
+      document.head.appendChild(s)
+    }
     window.gtag('js', new Date())
-    window.gtag('config', gaId, { anonymize_ip: true })
+    window.gtag('config', gaId)
   }
 
   const pixelId = import.meta.env.VITE_META_PIXEL_ID
