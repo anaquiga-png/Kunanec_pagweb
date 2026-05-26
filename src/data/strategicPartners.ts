@@ -22,9 +22,9 @@ export const strategicPartners: StrategicPartner[] = [
     logoSrc: '/logos/aliados/aliado-2.png',
   },
   {
-    id: 'tinka',
-    name: 'TiNKA',
-    logoSrc: '/logos/aliados/aliado-3.jpeg',
+    id: 'overall',
+    name: 'Overall',
+    logoSrc: '/logos/aliados/aliado-3.png',
   },
   {
     id: 'ntt-data',

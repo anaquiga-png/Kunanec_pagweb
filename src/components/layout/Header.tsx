@@ -6,7 +6,6 @@ import { trackCtaClick } from '@/lib/tracking'
 
 const links = [
   { href: '#beneficios', label: 'Beneficios' },
-  { href: '#valor', label: 'Valor' },
   { href: '#como-funciona', label: 'Cómo funciona' },
   { href: '#casos', label: 'Casos de uso' },
   { href: '#aliados', label: 'Aliados' },

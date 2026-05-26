@@ -16,7 +16,7 @@ const pains = [
   {
     title: 'Alta rotación de colaboradores',
     icon: Users,
-    desc: 'Talento que busca propósito y respaldo real, no solo un PDF.',
+    desc: 'Talento que busca propósito y respaldo real.',
   },
   {
     title: 'Ausentismo y costos de bienestar',

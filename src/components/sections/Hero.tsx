@@ -29,13 +29,8 @@ export function Hero() {
               Convierte el bienestar en una ventaja competitiva
             </h1>
             <p className="mt-6 max-w-2xl text-lg text-slate-200 sm:text-xl">
-              Genera lealtad, confianza y diferenciación ofreciendo acceso inmediato a apoyo profesional para tus
-              clientes y colaboradores.
-            </p>
-            <p className="mt-4 max-w-2xl text-sm text-slate-300/95 sm:text-base">
-              En Ecuador, Kunan Salud Ecuador une salud digital, telemedicina y experiencia de marca para programas
-              de lealtad, fidelización de clientes y beneficios para colaboradores — tecnología y acompañamiento, sin
-              sensación de “sitio hospitalario”.
+              Plataforma de bienestar, telemedicina y beneficios corporativos diseñada para empresas y programas de
+              fidelización que buscan mejorar engagement, experiencia y salud digital.
             </p>
           </motion.div>
           <motion.div

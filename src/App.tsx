@@ -9,7 +9,6 @@ import { HowItWorks } from '@/components/sections/HowItWorks'
 import { OurBenefits } from '@/components/sections/OurBenefits'
 import { Problem } from '@/components/sections/Problem'
 import { UseCases } from '@/components/sections/UseCases'
-import { ValueCards } from '@/components/sections/ValueCards'
 
 function App() {
   return (
@@ -20,11 +19,10 @@ function App() {
         <Hero />
         <Problem />
         <OurBenefits />
-        <ValueCards />
         <HowItWorks />
         <UseCases />
-        <EmotionalStatement />
         <StrategicPartners />
+        <EmotionalStatement />
         <FinalCta />
       </main>
       <Footer />
