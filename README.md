@@ -89,13 +89,14 @@ Todo esto es **opcional**: si dejas las claves vacías, la web funciona igual; s
 
 | Variable | Para qué sirve | Dónde obtenerla |
 |----------|----------------|-----------------|
-| `VITE_GA4_MEASUREMENT_ID` | Carga gtag y envía eventos personalizados (`form_view`, `form_start`, `lead_submit`, `cta_click`). | [Google Analytics](https://analytics.google.com/) → Admin → **Data streams** → tu web → **Measurement ID** (formato `G-XXXXXXXX`). |
+| `VITE_GTM_CONTAINER_ID` | Snippet de **Google Tag Manager** en el HTML (lo que pide “Instalar GTM”). Prioridad sobre GA4 en el build. | [Google Tag Manager](https://tagmanager.google.com/) → tu contenedor → **ID** `GTM-XXXXXXX`. Configura GA4 como tag dentro de GTM. |
+| `VITE_GA4_MEASUREMENT_ID` | Snippet **GA4 (gtag)** en el HTML si no hay GTM; eventos `form_view`, `lead_submit`, `cta_click`, etc. | [Google Analytics](https://analytics.google.com/) → Admin → **Data streams** → **Measurement ID** `G-XXXXXXXX`. |
 | `VITE_META_PIXEL_ID` | Carga el pixel de Meta: `PageView` al cargar; en la app también `Lead` (envío exitoso del formulario) y `Contact` (“Hablar con un asesor”). | [Meta Events Manager](https://business.facebook.com/events_manager) → **Fuentes de datos** → tu pixel → **ID del pixel** (solo números). |
 | `VITE_SITE_CANONICAL_URL` | `<link rel="canonical">` y URL en JSON-LD del negocio local. Debe ser la URL **definitiva** de esta landing (con `https://`). | La URL pública real, ej. `https://ecuador.kunansalud.com` o la de Vercel/Netlify en producción. |
 | `VITE_PUBLIC_SITE_URL` | Origen público **sin barra final**: JSON-LD `@id`, `og:url` si no hay canonical, y fallback del logo en datos estructurados. | Ej. `https://ecuador.kunansalud.com` |
 | `VITE_OG_IMAGE_URL` | Imagen absoluta para **Open Graph** / LinkedIn (1200×630 recomendado). Si no la pones, se usa `{VITE_PUBLIC_SITE_URL}/favicon.svg`. | URL completa a un `.png` o `.jpg` en tu CDN o `public/` servido en producción. |
 
-Implementación en código: carga de scripts en [`src/lib/analytics.ts`](src/lib/analytics.ts); meta tags y JSON-LD en [`src/components/Seo.tsx`](src/components/Seo.tsx). Tras cambiar `.env.local`, **reinicia** `npm run dev`.
+Implementación: inyección en `index.html` al hacer `npm run build` ([`vite-plugin-inject-analytics.ts`](vite-plugin-inject-analytics.ts)); eventos en [`src/lib/tracking.ts`](src/lib/tracking.ts). **En Vercel** debes definir las mismas `VITE_*` en *Settings → Environment Variables* y volver a desplegar, o el HTML de producción no llevará tags.
 
 **CRM (futuro):** `VITE_CRM_WEBHOOK_URL` — ver comentarios en [`src/lib/crm.ts`](src/lib/crm.ts).
 

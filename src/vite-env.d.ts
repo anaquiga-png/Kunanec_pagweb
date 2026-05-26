@@ -6,6 +6,8 @@ declare module 'vite/client' {
     readonly VITE_SUPABASE_URL?: string
     /** Supabase anon (public) key — add in .env as VITE_SUPABASE_ANON_KEY */
     readonly VITE_SUPABASE_ANON_KEY?: string
+    /** Google Tag Manager container ID (GTM-XXXXXXX) */
+    readonly VITE_GTM_CONTAINER_ID?: string
     /** GA4 Measurement ID (G-XXXXXXXX) — add in .env as VITE_GA4_MEASUREMENT_ID */
     readonly VITE_GA4_MEASUREMENT_ID?: string
     /** Meta Pixel ID — add in .env as VITE_META_PIXEL_ID */

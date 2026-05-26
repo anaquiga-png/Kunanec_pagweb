@@ -15,8 +15,14 @@ export function gaEvent(
   name: 'form_view' | 'form_start' | 'lead_submit' | 'cta_click',
   params?: Record<string, string | number | boolean | undefined>,
 ) {
-  if (typeof window === 'undefined' || typeof window.gtag !== 'function') return
-  window.gtag('event', name, params ?? {})
+  if (typeof window === 'undefined') return
+  const payload = { event: name, ...params }
+  if (typeof window.gtag === 'function') {
+    window.gtag('event', name, params ?? {})
+    return
+  }
+  window.dataLayer = window.dataLayer ?? []
+  window.dataLayer.push(payload)
 }
 
 export function trackCtaClick(payload: CtaClickPayload) {
