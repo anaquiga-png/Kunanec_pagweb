@@ -8,7 +8,7 @@ import { Helmet } from 'react-helmet-async'
  */
 const defaultTitle = 'Kunan Salud Ecuador | Bienestar, lealtad y beneficios corporativos'
 const defaultDescription =
-  'Kunan Salud Ecuador ayuda a empresas, bancos y aliados estratégicos a convertir el bienestar en una ventaja competitiva, generando lealtad, confianza y diferenciación.'
+  'Kunan Salud Ecuador ayuda a empresas, bancos y aliados estratégicos a convertir la salud y el bienestar en una ventaja competitiva, generando lealtad, confianza y diferenciación.'
 
 const keywords =
   'Kunan Salud Ecuador, bienestar corporativo Ecuador, beneficios para colaboradores Ecuador, loyalty Ecuador, fidelización de clientes Ecuador, salud digital Ecuador, bienestar digital Ecuador, beneficios empresariales Ecuador, telemedicina Ecuador, programas de lealtad Ecuador'

@@ -100,6 +100,11 @@ Implementación: inyección en `index.html` al hacer `npm run build` ([`vite-plu
 
 **CRM (futuro):** `VITE_CRM_WEBHOOK_URL` — ver comentarios en [`src/lib/crm.ts`](src/lib/crm.ts).
 
+### Banner LinkedIn
+
+- Archivo: [`public/linkedin-banner-kunan-ec.png`](public/linkedin-banner-kunan-ec.png) (1584 × 396 px).
+- Subir en LinkedIn → perfil o página empresa → **Editar imagen de portada** → cargar ese PNG.
+
 ## Scripts
 
 - `npm run dev` — local dev server

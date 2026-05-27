@@ -8,6 +8,6 @@ export const BENEFIT_MOCKUPS = {
   saludMental: '/mockups/salud-mental.png',
   nutricion: '/mockups/nutricion.png',
   contenidoBienestar: '/mockups/contenido-bienestar.png',
-  plataformaAcceso: '/mockups/plataforma-acceso2.png',
+  plataformaAcceso: '/mockups/plataforma-acceso3.jpg',
   dashboardEmpresa: '/mockups/dashboard-empresa.png',
 } as const

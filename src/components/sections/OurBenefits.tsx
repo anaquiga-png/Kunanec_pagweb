@@ -133,23 +133,23 @@ function BenefitCard({ benefit, index }: { benefit: BenefitItem; index: number }
       whileInView={{ opacity: 1, y: 0 }}
       viewport={{ once: true, margin: '-50px' }}
       transition={{ duration: 0.5, delay: index * 0.06 }}
-      className="group relative"
+      className="group relative flex h-full min-h-0 flex-col"
     >
       <div
         className={`pointer-events-none absolute -inset-px rounded-[1.75rem] bg-gradient-to-br opacity-0 blur-xl transition duration-500 group-hover:opacity-100 ${theme.glow}`}
       />
       <div
-        className={`relative overflow-hidden rounded-[1.75rem] border border-white/90 bg-gradient-to-br ${theme.card} p-6 shadow-[0_8px_40px_-12px_rgba(28,36,51,0.12)] ring-1 ring-slate-200/50 backdrop-blur-md transition duration-300 group-hover:-translate-y-1 group-hover:shadow-[0_20px_50px_-15px_rgba(111,45,226,0.18)] sm:p-7 lg:p-8 ${theme.accentRing} group-hover:ring-2`}
+        className={`relative flex h-full min-h-0 flex-1 flex-col overflow-hidden rounded-[1.75rem] border border-white/90 bg-gradient-to-br ${theme.card} p-6 shadow-[0_8px_40px_-12px_rgba(28,36,51,0.12)] ring-1 ring-slate-200/50 backdrop-blur-md transition duration-300 group-hover:-translate-y-1 group-hover:shadow-[0_20px_50px_-15px_rgba(111,45,226,0.18)] sm:p-7 lg:p-8 ${theme.accentRing} group-hover:ring-2`}
       >
         <div
           className={`pointer-events-none absolute -right-20 -top-20 h-56 w-56 rounded-full bg-gradient-to-br ${theme.glow} opacity-40 blur-3xl transition duration-500 group-hover:opacity-70`}
         />
         <div
-          className={`relative flex flex-col gap-8 xl:items-stretch xl:gap-10 ${
+          className={`relative flex min-h-0 flex-1 flex-col gap-8 xl:items-center xl:gap-10 ${
             reverse ? 'xl:flex-row-reverse' : 'xl:flex-row'
           }`}
         >
-          <div className="flex flex-1 flex-col justify-center space-y-5 xl:min-w-0 xl:max-w-[46%] xl:py-1">
+          <div className="flex shrink-0 flex-col justify-center space-y-5 xl:min-h-0 xl:min-w-0 xl:max-w-[38%] xl:flex-1 xl:justify-center xl:py-1">
             <span
               className={`inline-flex w-fit items-center gap-2 rounded-full px-3.5 py-1.5 text-xs font-semibold ring-1 backdrop-blur-sm ${theme.pill}`}
             >
@@ -166,11 +166,12 @@ function BenefitCard({ benefit, index }: { benefit: BenefitItem; index: number }
               <BenefitCta label={benefit.cta} section={`beneficios_${benefit.id}`} />
             </div>
           </div>
-          <div className="relative flex min-h-[240px] flex-1 items-center justify-center sm:min-h-[280px] xl:min-h-[300px]">
+          <div className="relative flex w-full min-h-[200px] flex-col items-center justify-center sm:min-h-[240px] xl:min-h-0 xl:min-w-[58%] xl:flex-1">
             <BenefitMockupImage
               src={benefit.mockupSrc}
               alt={benefit.mockupAlt}
               objectPosition={benefit.mockupPosition}
+              fillColumn
               className="max-w-full"
             />
           </div>
@@ -206,8 +207,8 @@ function EnterpriseDashboardBenefit() {
         <div
           className={`pointer-events-none absolute -right-20 -top-20 h-56 w-56 rounded-full bg-gradient-to-br ${theme.glow} opacity-40 blur-3xl transition duration-500 group-hover:opacity-70`}
         />
-        <div className="relative flex flex-col gap-8 xl:flex-row xl:items-stretch xl:gap-10">
-          <div className="flex flex-1 flex-col justify-center space-y-5 xl:min-w-0 xl:max-w-[46%] xl:py-1">
+        <div className="relative flex flex-col gap-8 xl:flex-row xl:items-center xl:gap-10">
+          <div className="flex flex-1 flex-col justify-center space-y-5 xl:min-w-0 xl:max-w-[38%] xl:py-1">
             <span
               className={`inline-flex w-fit items-center gap-2 rounded-full px-3.5 py-1.5 text-xs font-semibold ring-1 backdrop-blur-sm ${theme.pill}`}
             >
@@ -238,7 +239,7 @@ function EnterpriseDashboardBenefit() {
               </a>
             </div>
           </div>
-          <div className="relative flex min-h-[240px] flex-1 items-center justify-center sm:min-h-[280px] xl:min-h-[300px]">
+          <div className="relative flex min-h-[200px] w-full flex-1 flex-col items-center justify-center sm:min-h-[240px] xl:min-h-0 xl:min-w-[58%]">
             <BenefitMockupImage
               src={BENEFIT_MOCKUPS.dashboardEmpresa}
               alt="Dashboard empresarial Kunan: métricas, engagement y uso de beneficios"
@@ -308,7 +309,7 @@ export function OurBenefits() {
           <Sparkles className="mx-auto mt-5 h-5 w-5 text-kunan-primary/45" aria-hidden />
         </motion.header>
 
-        <div className="grid gap-7 lg:grid-cols-2 lg:gap-x-10 lg:gap-y-12">
+        <div className="grid gap-7 lg:grid-cols-2 lg:items-stretch lg:gap-x-10 lg:gap-y-12">
           {benefits.map((benefit, index) => (
             <BenefitCard key={benefit.id} benefit={benefit} index={index} />
           ))}
