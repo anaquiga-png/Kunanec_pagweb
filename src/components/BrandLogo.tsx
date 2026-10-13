@@ -8,7 +8,7 @@ type BrandLogoProps = {
 
 const LOGO_SRC_BY_VARIANT: Record<BrandLogoVariant, string> = {
   color: '/logo_kunan-1.png',
-  negative: '/logo_kunan-negativo.png',
+  negative: '/logo_kunan-negativo-transparent.png',
 }
 
 /**

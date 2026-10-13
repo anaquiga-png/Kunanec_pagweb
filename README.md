@@ -1,6 +1,6 @@
 # Kunan Salud Ecuador — landing
 
-Vite + React + TypeScript + Tailwind CSS. Lead capture goes to Supabase table `kunan_leads` (see `supabase/migrations/001_kunan_leads.sql`).
+Vite + React + TypeScript + Tailwind CSS. Los leads del formulario van a **HubSpot** (recomendado) y, opcionalmente, a Supabase (`kunan_leads`).
 
 **Hosting recomendado:** [Vercel](https://vercel.com) + dominio en [GoDaddy](https://www.godaddy.com) (HTTPS automático, previews por rama, encaja con Vite). El repo incluye [`vercel.json`](vercel.json) con build y salida `dist`.
 
@@ -73,7 +73,9 @@ Host github.com
 
 Para que tus commits muestren tu nombre y correo: `git config --global user.name "Tu Nombre"` y `git config --global user.email "tu@email.com"`.
 
-### Conectar Supabase
+### Conectar Supabase (opcional)
+
+Solo si quieres una copia en base de datos además de HubSpot.
 
 1. En [Supabase Dashboard](https://supabase.com/dashboard) → tu proyecto → **Settings → API**.
 2. Copia **Project URL** y la clave **anon public** (no uses `service_role` en el front).
@@ -98,12 +100,93 @@ Todo esto es **opcional**: si dejas las claves vacías, la web funciona igual; s
 
 Implementación: inyección en `index.html` al hacer `npm run build` ([`vite-plugin-inject-analytics.ts`](vite-plugin-inject-analytics.ts)); eventos en [`src/lib/tracking.ts`](src/lib/tracking.ts). **En Vercel** debes definir las mismas `VITE_*` en *Settings → Environment Variables* y volver a desplegar, o el HTML de producción no llevará tags.
 
-**CRM (futuro):** `VITE_CRM_WEBHOOK_URL` — ver comentarios en [`src/lib/crm.ts`](src/lib/crm.ts).
+**CRM (HubSpot):** destino principal de leads — ver [HubSpot](#hubspot-formulario-de-leads). Supabase es opcional.
+
+### HubSpot (formulario de leads)
+
+**Modo recomendado (solo HubSpot):** no configures `VITE_SUPABASE_*`. En Vercel define `HUBSPOT_PORTAL_ID` y `HUBSPOT_FORM_GUID`; cada envío va directo a HubSpot.
+
+**Modo dual:** con Supabase + HubSpot, primero se guarda en Supabase y HubSpot se intenta en paralelo (si HubSpot falla, el usuario igual ve éxito).
+
+#### Flujo al enviar el formulario (importante)
+
+Cada envío dispara **en paralelo** (mismo formulario de la landing):
+
+| Destino | Para qué | ¿Depende de Supabase? |
+|---------|----------|------------------------|
+| **n8n** (`VITE_N8N_WEBHOOK_URL`) | Correos y automatizaciones | **No** — va directo desde el navegador |
+| **HubSpot** (`HUBSPOT_*` en Vercel) | CRM / contactos | **No** |
+| **Supabase** (`VITE_SUPABASE_*`) | Copia en base de datos | — |
+
+Si **Supabase está pausado** (plan gratis sin actividad ~7 días), el formulario **sigue funcionando** siempre que **n8n** o **HubSpot** respondan. El usuario ve éxito y el correo puede salir igual.
+
+**Supabase pausado:** en el [dashboard de Supabase](https://supabase.com/dashboard) → tu proyecto → **Restore project**. Para evitar pausas: plan de pago, o un ping periódico al API (p. ej. cron semanal); lo crítico (correo + CRM) ya no depende solo de Supabase.
+
+Código: [`src/lib/lead-delivery.ts`](src/lib/lead-delivery.ts).
+
+#### 1) Crear el formulario en HubSpot
+
+1. [HubSpot](https://app.hubspot.com) → **Marketing** → **Formularios** → **Crear formulario** (formulario normal, no popup).
+2. Añade campos con estos **nombres internos** (deben coincidir):
+
+| Campo en la landing | Nombre interno en HubSpot | Tipo sugerido |
+|---------------------|---------------------------|---------------|
+| Nombre | `firstname` + `lastname` | Nombre (HubSpot lo parte solo; enviamos ambos) |
+| Email | `email` | Email |
+| Teléfono | `phone` | Teléfono |
+| Empresa | `company` | Texto de una línea |
+| Cargo | `jobtitle` | Texto de una línea |
+| Mensaje + metadatos | `message` | Área de texto multilínea |
+
+3. Activa **Crear contacto** / asociar envíos a contactos (opción del formulario).
+4. Publica el formulario.
+5. Obtén:
+   - **Portal ID** (ID de cuenta): *Configuración* → *Información de la cuenta* → ID del portal, o en la URL `app.hubspot.com/contacts/{portalId}/...`
+   - **Form GUID**: en el formulario → *Compartir* / *Integrar* → API de envío, o URL `.../forms/{formGuid}`.
+
+#### 2) Variables en Vercel
+
+En **Settings → Environment Variables** (Production):
+
+| Variable | Valor |
+|----------|--------|
+| `HUBSPOT_PORTAL_ID` | Tu ID de portal (solo números) |
+| `HUBSPOT_FORM_GUID` | GUID del formulario |
+
+**Redeploy** después de guardar.
+
+#### 3) Probar
+
+1. Envía el formulario en producción.
+2. En HubSpot → **Contactos** o **Envíos de formulario** debe aparecer el lead.
+3. Tipo de organización, volumen y UTM van dentro del campo **message** (bloque bajo `---`).
+
+#### Desarrollo local
+
+- Con API serverless: `npx vercel dev` y las mismas `HUBSPOT_*` en `.env.local`.
+- Sin Vercel: añade `VITE_HUBSPOT_PORTAL_ID` y `VITE_HUBSPOT_FORM_GUID` en `.env.local` (el navegador llama directo a HubSpot).
+
+Código: [`src/lib/crm.ts`](src/lib/crm.ts), [`src/lib/hubspot-lead.ts`](src/lib/hubspot-lead.ts), [`api/hubspot-lead.ts`](api/hubspot-lead.ts).
 
 ### Banner LinkedIn
 
-- Archivo: [`public/linkedin-banner-kunan-ec.png`](public/linkedin-banner-kunan-ec.png) (1584 × 396 px).
-- Subir en LinkedIn → perfil o página empresa → **Editar imagen de portada** → cargar ese PNG.
+| Uso | Archivo | Contenido |
+|-----|---------|-----------|
+| Página / empresa | [`public/linkedin-banner-kunan-ec.png`](public/linkedin-banner-kunan-ec.png) | Degradado + frase (sin logo) |
+| Perfiles de empleados | [`public/linkedin-banner-kunan-empleado.png`](public/linkedin-banner-kunan-empleado.png) | Degradado + logo + frase en la **mitad derecha** (izquierda libre para la foto de perfil) |
+
+Tamaño: **1584 × 396 px**. Subir en LinkedIn → **Editar imagen de portada**.
+
+Logo transparente (icono + texto blanco, para fondos morados): [`public/logo_kunan-negativo-transparent.png`](public/logo_kunan-negativo-transparent.png) — generado desde `logo_kunan-1.png` con `node scripts/process-logo-transparent.mjs`.
+
+Regenerar banners:
+
+```bash
+npm install --no-save sharp   # solo si falta
+node scripts/process-logo-transparent.mjs
+node scripts/generate-linkedin-banner.mjs
+node scripts/generate-linkedin-banner-empleado.mjs
+```
 
 ## Scripts
 
@@ -111,7 +194,7 @@ Implementación: inyección en `index.html` al hacer `npm run build` ([`vite-plu
 - `npm run build` — production build
 - `npm run preview` — preview production build
 
-Si aún no ejecutaste el SQL en Supabase, los inserts del formulario fallarán hasta que exista la tabla `kunan_leads` y las políticas RLS.
+Si aún no ejecutaste el SQL en Supabase, los inserts del formulario fallarán hasta que exista la tabla `kunan_leads` y las políticas RLS. **Si usas solo HubSpot, puedes ignorar Supabase.**
 
 ## Publicar en internet (Vercel + dominio GoDaddy)
 
@@ -128,7 +211,7 @@ Esta app es estática: `npm run build` genera **`dist/`**. La opción que usamos
 
 En Vite, las variables `VITE_*` se **inyectan al compilar**. En Vercel: proyecto → **Settings** → **Environment Variables** → añade las mismas claves que en `.env.local` (marca al menos **Production**; opcional **Preview** para ramas).
 
-Mínimo: `VITE_SUPABASE_URL`, `VITE_SUPABASE_ANON_KEY`. Cuando tengas dominio propio: `VITE_SITE_CANONICAL_URL` y `VITE_PUBLIC_SITE_URL` con tu URL real (`https://tudominio.com`; en `VITE_PUBLIC_SITE_URL` **sin** `/` final). Luego **Redeploy** para que el nuevo build las incluya.
+Mínimo para leads: `HUBSPOT_PORTAL_ID`, `HUBSPOT_FORM_GUID`. Opcional: `VITE_SUPABASE_URL`, `VITE_SUPABASE_ANON_KEY`. Cuando tengas dominio propio: `VITE_SITE_CANONICAL_URL` y `VITE_PUBLIC_SITE_URL` con tu URL real (`https://tudominio.com`; en `VITE_PUBLIC_SITE_URL` **sin** `/` final). Luego **Redeploy** para que el nuevo build las incluya.
 
 ### 3. Conectar el dominio de GoDaddy a Vercel
 

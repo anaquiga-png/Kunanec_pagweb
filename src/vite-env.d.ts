@@ -18,6 +18,12 @@ declare module 'vite/client' {
     readonly VITE_PUBLIC_SITE_URL?: string
     /** Absolute URL for og:image (LinkedIn) */
     readonly VITE_OG_IMAGE_URL?: string
+    /** HubSpot portal ID — solo dev local (producción usa /api/hubspot-lead) */
+    readonly VITE_HUBSPOT_PORTAL_ID?: string
+    /** HubSpot form GUID — solo dev local */
+    readonly VITE_HUBSPOT_FORM_GUID?: string
+    /** Webhook n8n al enviar el formulario (correos); no usa Supabase */
+    readonly VITE_N8N_WEBHOOK_URL?: string
   }
 }
 

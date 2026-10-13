@@ -1,5 +1,5 @@
 import { BrandLogo } from '@/components/BrandLogo'
-import { KUNAN_EMPRESA_URL } from '@/lib/links'
+import { KUNAN_CONTENIDOS_URL, KUNAN_EMPRESA_URL } from '@/lib/links'
 
 type NavLink = { href: string; label: string; external?: boolean }
 
@@ -8,6 +8,7 @@ const navLinks: NavLink[] = [
   { href: '#beneficios', label: 'Beneficios' },
   { href: '#como-funciona', label: 'Cómo funciona' },
   { href: KUNAN_EMPRESA_URL, label: 'Para empresas', external: true },
+  { href: KUNAN_CONTENIDOS_URL, label: 'Contenidos', external: true },
   { href: '#demo', label: 'Agendar demo' },
 ]
 

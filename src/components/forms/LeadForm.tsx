@@ -2,8 +2,8 @@ import { zodResolver } from '@hookform/resolvers/zod'
 import { useEffect, useRef, useState } from 'react'
 import { useForm } from 'react-hook-form'
 import { useInView } from 'react-intersection-observer'
-import { forwardLeadToCrm } from '@/lib/crm'
-import { supabase, supabaseConfigured } from '@/lib/supabaseClient'
+import { deliverLead, isLeadDestinationConfigured } from '@/lib/lead-delivery'
+import { supabaseConfigured } from '@/lib/supabaseClient'
 import { metaTrackLead, trackFormStart, trackFormView, trackLeadSubmit } from '@/lib/tracking'
 import { useUtmParams } from '@/hooks/useUtmParams'
 import {
@@ -61,12 +61,6 @@ export function LeadForm() {
 
   const onValid = async (data: LeadFormValues) => {
     setSubmitError(null)
-    if (!supabaseConfigured) {
-      setSubmitError(
-        'Falta configurar Supabase. Añade VITE_SUPABASE_URL y VITE_SUPABASE_ANON_KEY en tu archivo .env.',
-      )
-      return
-    }
 
     const landing = typeof window !== 'undefined' ? window.location.href : ''
     const row: KunanLeadInsert = {
@@ -89,13 +83,17 @@ export function LeadForm() {
       client_timestamp: new Date().toISOString(),
     }
 
-    const { error } = await supabase.from('kunan_leads').insert(row)
+    const delivery = await deliverLead(row)
 
-    if (error) {
+    if (!delivery.ok) {
       setSubmitError(
-        'No pudimos enviar tu solicitud. Verifica tu conexión o inténtalo más tarde. Si el problema continúa, escríbenos por WhatsApp.',
+        'No pudimos enviar tu solicitud ahora. Suele pasar si Supabase está pausado o el correo automático (n8n) no responde. Restaura el proyecto en Supabase o configura HubSpot y vuelve a intentar; si el problema continúa, escríbenos por WhatsApp.',
       )
       return
+    }
+
+    if (supabaseConfigured && delivery.supabase === false) {
+      console.warn('[LeadForm] Supabase no disponible (¿proyecto pausado?); lead enviado por otro canal.')
     }
 
     trackLeadSubmit({
@@ -103,13 +101,6 @@ export function LeadForm() {
       company: data.company,
     })
     metaTrackLead()
-    void forwardLeadToCrm(row)
-
-    void fetch('https://anaquiga.app.n8n.cloud/webhook/registro-landing', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify(row),
-    }).catch(() => {})
     setSuccess(true)
     reset()
   }
@@ -138,10 +129,9 @@ export function LeadForm() {
 
   return (
     <div ref={viewRef} className="rounded-3xl border border-slate-200 bg-white p-6 shadow-xl shadow-slate-200/60 sm:p-8">
-      {!supabaseConfigured && (
+      {!isLeadDestinationConfigured() && (
         <p className="mb-4 rounded-xl border border-amber-200 bg-amber-50 px-4 py-3 text-sm text-amber-900">
-          Modo sin Supabase: configura <code className="rounded bg-amber-100 px-1">VITE_SUPABASE_URL</code> y{' '}
-          <code className="rounded bg-amber-100 px-1">VITE_SUPABASE_ANON_KEY</code> para guardar leads.
+          Falta configurar un destino para leads: Supabase, HubSpot (`HUBSPOT_*` en Vercel) o webhook n8n (`VITE_N8N_WEBHOOK_URL`).
         </p>
       )}
       <form
@@ -200,7 +190,7 @@ export function LeadForm() {
           <label className={labelClass} htmlFor="organization_type">
             Tipo de organización
           </label>
-          <select id="organization_type" className={fieldClass} defaultValue="" {...register('organization_type')}>
+          <select id="organization_type" className={fieldClass} {...register('organization_type')}>
             <option value="" disabled>
               Selecciona…
             </option>
