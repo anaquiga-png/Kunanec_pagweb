@@ -4,6 +4,7 @@ import { Header } from '@/components/layout/Header'
 import { EmotionalStatement } from '@/components/sections/EmotionalStatement'
 import { FinalCta } from '@/components/sections/FinalCta'
 import { StrategicPartners } from '@/components/sections/StrategicPartners'
+import { Testimonials } from '@/components/sections/Testimonials'
 import { Hero } from '@/components/sections/Hero'
 import { HowItWorks } from '@/components/sections/HowItWorks'
 import { OurBenefits } from '@/components/sections/OurBenefits'
@@ -22,6 +23,7 @@ function App() {
         <HowItWorks />
         <UseCases />
         <StrategicPartners />
+        <Testimonials />
         <EmotionalStatement />
         <FinalCta />
       </main>
