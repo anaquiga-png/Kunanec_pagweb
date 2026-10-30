@@ -10,6 +10,7 @@ export type LeadDeliveryResult = {
   supabase: boolean | 'skipped'
   hubspot: boolean | 'skipped'
   n8n: boolean | 'skipped'
+  email: boolean | 'skipped'
   errors: string[]
 }
 
@@ -92,26 +93,52 @@ async function forwardHubSpotSafe(row: KunanLeadInsert): Promise<boolean | 'skip
   }
 }
 
+/** Aviso por correo a ventas@ (no bloquea el éxito del formulario si falla). */
+async function notifySalesEmail(row: KunanLeadInsert): Promise<boolean> {
+  try {
+    const response = await withTimeout(
+      fetch('/api/notify-lead-email', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(row),
+        signal: AbortSignal.timeout(CHANNEL_TIMEOUT_MS),
+      }),
+      CHANNEL_TIMEOUT_MS + 500,
+      'email',
+    )
+    if (!response.ok) {
+      console.warn('[leads] email notify failed', response.status, await response.text())
+      return false
+    }
+    return true
+  } catch (error) {
+    console.warn('[leads] email notify error', error)
+    return false
+  }
+}
+
 /**
  * Envía el lead en paralelo a los destinos configurados.
- * Éxito si al menos un destino responde bien.
+ * Éxito si al menos un destino CRM/DB responde bien.
+ * El correo a ventas es best-effort (no hace fallar el envío).
  */
 export async function deliverLead(row: KunanLeadInsert): Promise<LeadDeliveryResult> {
   const runSupabase = supabaseConfigured
   const runN8n = isN8nConfigured()
-  // Siempre intentamos /api/hubspot-lead en prod (o VITE_HUBSPOT_* en local).
   const errors: string[] = []
 
-  const [supabaseOk, hubspotResult, n8nOk] = await Promise.all([
+  const [supabaseOk, hubspotResult, n8nOk, emailOk] = await Promise.all([
     runSupabase ? saveToSupabase(row) : Promise.resolve(false as const),
     forwardHubSpotSafe(row),
     runN8n ? forwardToN8n(row) : Promise.resolve(false as const),
+    notifySalesEmail(row),
   ])
 
   const hubspotOk = hubspotResult === true
   if (runSupabase && !supabaseOk) errors.push('supabase')
   if (!hubspotOk) errors.push('hubspot')
   if (runN8n && !n8nOk) errors.push('n8n')
+  if (!emailOk) errors.push('email')
 
   const successes = [runSupabase && supabaseOk, hubspotOk, runN8n && n8nOk].filter(Boolean).length
 
@@ -119,6 +146,7 @@ export async function deliverLead(row: KunanLeadInsert): Promise<LeadDeliveryRes
     supabase: runSupabase ? Boolean(supabaseOk) : 'skipped',
     hubspot: hubspotOk,
     n8n: runN8n ? Boolean(n8nOk) : 'skipped',
+    email: emailOk,
     ok: successes > 0,
     errors,
   }
