@@ -19,7 +19,12 @@ export function LeadForm() {
   const [success, setSuccess] = useState(false)
   const formStarted = useRef(false)
   const formViewSent = useRef(false)
-  const { ref: viewRef, inView } = useInView({ triggerOnce: true, threshold: 0.12 })
+  // threshold 0 + rootMargin: form_view debe dispararse apenas el form entra en viewport
+  const { ref: viewRef, inView } = useInView({
+    triggerOnce: true,
+    threshold: 0,
+    rootMargin: '0px 0px -10% 0px',
+  })
 
   const {
     register,
@@ -37,14 +42,18 @@ export function LeadForm() {
     },
   })
 
+  const markFormView = () => {
+    if (formViewSent.current) return
+    formViewSent.current = true
+    trackFormView()
+  }
+
   useEffect(() => {
-    if (inView && !formViewSent.current) {
-      formViewSent.current = true
-      trackFormView()
-    }
+    if (inView) markFormView()
   }, [inView])
 
   const markFormStart = () => {
+    markFormView()
     if (formStarted.current) return
     formStarted.current = true
     trackFormStart()
@@ -52,6 +61,8 @@ export function LeadForm() {
 
   const onValid = async (data: LeadFormValues) => {
     setSubmitError(null)
+    // Garantiza form_view → form_start → qualify_lead en la misma sesión
+    markFormStart()
 
     const landing = typeof window !== 'undefined' ? window.location.href : ''
     const row: KunanLeadInsert = {
