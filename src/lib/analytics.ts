@@ -5,7 +5,7 @@
  * - GA4: `VITE_GA4_MEASUREMENT_ID` (`G-…`). Si hay GTM, configura GA4 como tag dentro de GTM; si no hay GTM, se inyecta gtag en index.html.
  * - Meta: `VITE_META_PIXEL_ID` (ID numérico en Events Manager). Si está vacío, no se carga fbq.
  *
- * Eventos en la app (también en `src/lib/tracking.ts`): GA4 `form_view`, `form_start`, `lead_submit`, `cta_click`;
+ * Eventos en la app (también en `src/lib/tracking.ts`): GA4 `form_view`, `form_start`, `qualify_lead` (+ `lead_submit` legacy), `cta_click`;
  * Meta estándar `Lead` y `Contact` según acciones del usuario.
  */
 import { initDataLayer } from '@/lib/tracking'

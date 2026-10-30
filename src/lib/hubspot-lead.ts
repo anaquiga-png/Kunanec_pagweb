@@ -57,8 +57,8 @@ function formatMessageBlock(payload: HubSpotLeadPayload): string {
     .join(' / ')
 
   const meta = [
-    `Tipo de organización: ${payload.organization_type}`,
-    `Volumen aproximado: ${payload.user_volume}`,
+    payload.organization_type ? `Tipo de organización: ${payload.organization_type}` : null,
+    payload.user_volume ? `Volumen aproximado: ${payload.user_volume}` : null,
     utmParts ? `UTM: ${utmParts}` : null,
     payload.landing_page_url ? `Landing: ${payload.landing_page_url}` : null,
     `Origen: ${payload.source}`,
@@ -67,7 +67,8 @@ function formatMessageBlock(payload: HubSpotLeadPayload): string {
     .filter(Boolean)
     .join('\n')
 
-  return `${payload.message.trim()}\n\n---\n${meta}`
+  const body = payload.message?.trim() || 'Solicitud de demo desde la web'
+  return `${body}\n\n---\n${meta}`
 }
 
 export function buildHubSpotFormSubmission(payload: HubSpotLeadPayload): HubSpotFormSubmission {

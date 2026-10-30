@@ -2,10 +2,7 @@ import type { KunanLeadInsert } from '@/types/lead'
 import { forwardLeadToCrm, isHubSpotClientConfigured } from '@/lib/crm'
 import { supabase, supabaseConfigured } from '@/lib/supabaseClient'
 
-/** Webhook n8n (correos / automatizaciones). No depende de Supabase. */
-const DEFAULT_N8N_WEBHOOK_URL = 'https://anaquiga.app.n8n.cloud/webhook/registro-landing'
-
-/** Evita que un canal caído (p. ej. Supabase pausado) deje el formulario en “Enviando…” para siempre. */
+/** Evita que un canal caído deje el formulario en “Enviando…” para siempre. */
 const CHANNEL_TIMEOUT_MS = 8_000
 
 export type LeadDeliveryResult = {
@@ -13,12 +10,13 @@ export type LeadDeliveryResult = {
   supabase: boolean | 'skipped'
   hubspot: boolean | 'skipped'
   n8n: boolean | 'skipped'
+  errors: string[]
 }
 
 function n8nWebhookUrl(): string | null {
+  // Solo si está explícito en env. NO hardcodear URLs muertas (n8n cloud “No instance here”).
   const fromEnv = import.meta.env.VITE_N8N_WEBHOOK_URL?.trim()
-  if (fromEnv) return fromEnv
-  return DEFAULT_N8N_WEBHOOK_URL
+  return fromEnv || null
 }
 
 export function isN8nConfigured(): boolean {
@@ -85,8 +83,6 @@ async function forwardToN8n(row: KunanLeadInsert): Promise<boolean> {
 }
 
 async function forwardHubSpotSafe(row: KunanLeadInsert): Promise<boolean | 'skipped'> {
-  // En producción sin VITE_HUBSPOT_*: intentamos /api/hubspot-lead, pero con timeout.
-  // Si HubSpot no está configurado en Vercel, la API responde 503 rápido.
   try {
     const ok = await withTimeout(forwardLeadToCrm(row), CHANNEL_TIMEOUT_MS, 'hubspot')
     return ok
@@ -97,12 +93,14 @@ async function forwardHubSpotSafe(row: KunanLeadInsert): Promise<boolean | 'skip
 }
 
 /**
- * Envía el lead en paralelo a Supabase, HubSpot y n8n.
- * Éxito si al menos un destino responde bien. Cada canal tiene timeout (Supabase pausado no bloquea).
+ * Envía el lead en paralelo a los destinos configurados.
+ * Éxito si al menos un destino responde bien.
  */
 export async function deliverLead(row: KunanLeadInsert): Promise<LeadDeliveryResult> {
   const runSupabase = supabaseConfigured
   const runN8n = isN8nConfigured()
+  // Siempre intentamos /api/hubspot-lead en prod (o VITE_HUBSPOT_* en local).
+  const errors: string[] = []
 
   const [supabaseOk, hubspotResult, n8nOk] = await Promise.all([
     runSupabase ? saveToSupabase(row) : Promise.resolve(false as const),
@@ -111,12 +109,17 @@ export async function deliverLead(row: KunanLeadInsert): Promise<LeadDeliveryRes
   ])
 
   const hubspotOk = hubspotResult === true
+  if (runSupabase && !supabaseOk) errors.push('supabase')
+  if (!hubspotOk) errors.push('hubspot')
+  if (runN8n && !n8nOk) errors.push('n8n')
+
   const successes = [runSupabase && supabaseOk, hubspotOk, runN8n && n8nOk].filter(Boolean).length
 
   return {
     supabase: runSupabase ? Boolean(supabaseOk) : 'skipped',
-    hubspot: hubspotResult === 'skipped' ? 'skipped' : hubspotOk,
+    hubspot: hubspotOk,
     n8n: runN8n ? Boolean(n8nOk) : 'skipped',
     ok: successes > 0,
+    errors,
   }
 }

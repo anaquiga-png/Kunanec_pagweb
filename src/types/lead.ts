@@ -1,15 +1,5 @@
 import { z } from 'zod'
 
-export const ORGANIZATION_TYPES = [
-  'Empresa',
-  'Banco/Fintech',
-  'Programa de loyalty',
-  'Broker/Aliado',
-  'Otro',
-] as const
-
-const orgTypes = ORGANIZATION_TYPES
-
 const freeEmailDomains = new Set([
   'gmail.com',
   'googlemail.com',
@@ -25,10 +15,9 @@ const freeEmailDomains = new Set([
   'protonmail.com',
 ])
 
+/** Formulario corto: nombre, email, empresa, teléfono opcional + consentimiento. */
 export const leadFormSchema = z.object({
-  name: z.string().min(2, 'Ingresa tu nombre'),
-  company: z.string().min(2, 'Ingresa el nombre de la empresa'),
-  role: z.string().min(2, 'Ingresa tu cargo'),
+  name: z.string().min(2, 'Ingresa tu nombre completo'),
   email: z
     .string()
     .email('Email inválido')
@@ -37,15 +26,11 @@ export const leadFormSchema = z.object({
       if (!domain) return false
       return !freeEmailDomains.has(domain)
     }, 'Usa un email corporativo (no dominios personales gratuitos)'),
-  phone: z.string().min(8, 'Ingresa un teléfono o WhatsApp válido'),
-  organization_type: z
+  company: z.string().min(2, 'Ingresa el nombre de la empresa'),
+  phone: z
     .string()
-    .min(1, 'Selecciona un tipo de organización')
-    .refine((v): v is (typeof orgTypes)[number] => (orgTypes as readonly string[]).includes(v), {
-      message: 'Selecciona un tipo de organización',
-    }),
-  user_volume: z.string().min(1, 'Indica un volumen aproximado'),
-  message: z.string().min(10, 'Cuéntanos brevemente tu necesidad (mín. 10 caracteres)'),
+    .trim()
+    .refine((v) => v === '' || v.length >= 8, 'Ingresa un teléfono válido o déjalo vacío'),
   consent: z.boolean().refine((v) => v === true, {
     message: 'Debes aceptar ser contactado para continuar',
   }),
@@ -53,6 +38,7 @@ export const leadFormSchema = z.object({
 
 export type LeadFormValues = z.infer<typeof leadFormSchema>
 
+/** Payload hacia Supabase / HubSpot / n8n (campos legacy vacíos si el form es corto). */
 export type KunanLeadInsert = {
   name: string
   company: string
