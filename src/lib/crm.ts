@@ -1,36 +1,30 @@
 import type { KunanLeadInsert } from '@/types/lead'
+import { getHubSpotClientIds } from '@/lib/hubspot-config'
 import { submitToHubSpotForm } from '@/lib/hubspot-lead'
 
+/** Siempre hay destino HubSpot (env o IDs del formulario embebido). */
 export function isHubSpotClientConfigured(): boolean {
-  const portalId = import.meta.env.VITE_HUBSPOT_PORTAL_ID
-  const formGuid = import.meta.env.VITE_HUBSPOT_FORM_GUID
+  const { portalId, formGuid } = getHubSpotClientIds()
   return Boolean(portalId && formGuid)
 }
 
-/** Hay al menos un destino explícito en el cliente (Supabase o HubSpot VITE_*). */
-export function isHubSpotEnvConfiguredOnClient(): boolean {
-  return isHubSpotClientConfigured()
-}
-
 /**
- * Envía el lead a HubSpot (Forms API).
- * Producción: POST /api/hubspot-lead (HUBSPOT_PORTAL_ID + HUBSPOT_FORM_GUID en Vercel).
- * Local: VITE_HUBSPOT_* o `vercel dev`.
+ * Envía el lead a HubSpot Forms API.
+ * 1) Intenta directo desde el navegador (IDs públicos del form).
+ * 2) Si falla, intenta /api/hubspot-lead (env server-side en Vercel).
  */
 export async function forwardLeadToCrm(payload: KunanLeadInsert): Promise<boolean> {
-  try {
-    if (isHubSpotClientConfigured()) {
-      const result = await submitToHubSpotForm(
-        import.meta.env.VITE_HUBSPOT_PORTAL_ID!,
-        import.meta.env.VITE_HUBSPOT_FORM_GUID!,
-        payload,
-      )
-      if (!result.ok) {
-        console.warn('[crm] HubSpot client submit failed', result.status, result.detail)
-      }
-      return result.ok
-    }
+  const { portalId, formGuid } = getHubSpotClientIds()
 
+  try {
+    const clientResult = await submitToHubSpotForm(portalId, formGuid, payload)
+    if (clientResult.ok) return true
+    console.warn('[crm] HubSpot client submit failed', clientResult.status, clientResult.detail)
+  } catch (error) {
+    console.warn('[crm] HubSpot client submit error', error)
+  }
+
+  try {
     const response = await fetch('/api/hubspot-lead', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },

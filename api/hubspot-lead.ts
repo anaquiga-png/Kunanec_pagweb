@@ -97,15 +97,10 @@ export default async function handler(
       return res.status(405).json({ error: 'Method not allowed' })
     }
 
-    const portalId = process.env.HUBSPOT_PORTAL_ID?.trim()
-    const formGuid = process.env.HUBSPOT_FORM_GUID?.trim()
-
-    if (!portalId || !formGuid) {
-      return res.status(503).json({
-        error: 'HubSpot is not configured on the server',
-        hint: 'Set HUBSPOT_PORTAL_ID and HUBSPOT_FORM_GUID in Vercel → Settings → Environment Variables, then redeploy.',
-      })
-    }
+    // Prefer env; fallback = IDs públicos del embed HubSpot de Kunan EC.
+    const portalId = process.env.HUBSPOT_PORTAL_ID?.trim() || '51619844'
+    const formGuid =
+      process.env.HUBSPOT_FORM_GUID?.trim() || '58df5fa0-2b32-4e55-8834-71b84d7171a4'
 
     const payload = req.body ?? {}
     if (typeof payload.email !== 'string' || !payload.email.includes('@') || typeof payload.name !== 'string') {
